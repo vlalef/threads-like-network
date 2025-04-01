@@ -1,0 +1,74 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}Social Network{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="{% static 'network/styles.css' %}" rel="stylesheet">
+    <script src="{% static 'network/network.js' %}"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'index' %}">Network</a>
+
+    <div>
+        <ul class="navbar-nav mr-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}"><strong>{{ user.username }}</strong></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'following' %}"><strong>Following</strong></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' user.id %}"><strong>Profile</strong></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'explore' %}"><strong>Explore</strong></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}"><strong>Log Out</strong></a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}"><strong>Log In</strong></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}"><strong>Register</strong></a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+{% if messages %}
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        {% for message in messages %}
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                <div class="toast-header {% if message.tags %}bg-{{ message.tags }}{% endif %} text-white">
+                    <strong class="me-auto">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    {{ message }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+<div class="body">
+    {% block body %}
+    {% endblock %}
+</div>
+</body>
+</html>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(toast => toast.show());
+    });
+</script>
